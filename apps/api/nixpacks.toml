@@ -1,0 +1,11 @@
+# Railway deployment with LaTeX support
+# LaTeX is required for the CV generation feature
+
+[phases.setup]
+nixPkgs = ["texlive.combined.scheme-small", "nodejs_20"]
+
+[start]
+cmd = "node dist/index.js"
+
+[build]
+cmd = "npm run build"
