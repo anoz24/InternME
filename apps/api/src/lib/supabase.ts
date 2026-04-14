@@ -41,3 +41,12 @@ export async function getSignedDownloadUrl(key: string): Promise<string> {
   if (error || !data) throw error || new Error('Failed to generate signed url');
   return data.signedUrl;
 }
+
+export async function deleteFile(key: string): Promise<void> {
+  if (!supabaseClient) return;
+  const { error } = await supabaseClient.storage.from(BUCKET).remove([key]);
+  if (error) {
+    console.error('[Supabase] Failed to delete file:', key, error);
+  }
+}
+

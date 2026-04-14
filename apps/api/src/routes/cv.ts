@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { prisma } from '../lib/prisma';
 import { requireAuth, requireRole } from '../middleware/auth';
 import { generatePdf } from '../services/cvGenerator';
-import { uploadBuffer, getSignedDownloadUrl } from '../lib/supabase';
+import { uploadBuffer, getSignedDownloadUrl, deleteFile } from '../lib/supabase';
 
 const router = Router();
 
@@ -33,6 +33,11 @@ router.post('/generate', requireAuth, requireRole('STUDENT'), async (req, res, n
         error: 'CV generation failed. Make sure pdflatex (LaTeX) is installed on the server.',
         details: latexErr.message,
       });
+    }
+
+    // Delete existing PDF if it exists
+    if (user.studentProfile.cvPdfUrl && !user.studentProfile.cvPdfUrl.startsWith('http')) {
+      await deleteFile(user.studentProfile.cvPdfUrl);
     }
 
     const key = `cv-${user.id}-${Date.now()}.pdf`;

@@ -24,6 +24,7 @@
     "seed": "ts-node prisma/seed.ts"
   },
   "dependencies": {
-    "prisma": "^5.22.0"
+    "prisma": "^5.22.0",
+    "supabase": "^2.91.0"
   }
 }
