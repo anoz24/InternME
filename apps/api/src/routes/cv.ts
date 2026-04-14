@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { prisma } from '../lib/prisma';
 import { requireAuth, requireRole } from '../middleware/auth';
 import { generatePdf } from '../services/cvGenerator';
-import { uploadBuffer, getSignedDownloadUrl } from '../lib/r2';
+import { uploadBuffer, getSignedDownloadUrl } from '../lib/supabase';
 
 const router = Router();
 
@@ -40,14 +40,14 @@ router.post('/generate', requireAuth, requireRole('STUDENT'), async (req, res, n
 
     try {
       cvUrl = await uploadBuffer(key, pdfBuffer, 'application/pdf');
-    } catch (r2Err) {
-      // If R2 is not configured, serve the PDF directly as base64 for demo
-      console.warn('[CV] R2 not configured — returning base64');
+    } catch (storageErr) {
+      // If Supabase is not configured, serve the PDF directly as base64 for demo
+      console.warn('[CV] Supabase not configured — returning base64');
       const base64 = pdfBuffer.toString('base64');
       return res.json({
         url: null,
         base64: `data:application/pdf;base64,${base64}`,
-        message: 'R2 not configured. CV generated successfully but not stored remotely.',
+        message: 'Supabase not configured. CV generated successfully but not stored remotely.',
       });
     }
 
@@ -79,7 +79,7 @@ router.get('/download', requireAuth, requireRole('STUDENT'), async (req, res, ne
       return res.redirect(profile.cvPdfUrl);
     }
 
-    // Otherwise generate a signed URL from R2
+    // Otherwise generate a signed URL from Supabase
     try {
       const url = await getSignedDownloadUrl(profile.cvPdfUrl);
       return res.redirect(url);

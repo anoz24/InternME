@@ -175,7 +175,7 @@ router.post('/disputes/:gigId/resolve', requireAuth, requireRole('ADMIN'), async
         }
       });
     } else {
-      await prisma.$transaction(async (tx: typeof prisma) => {
+      await prisma.$transaction(async (tx: any) => {
         await tx.escrow.update({ where: { id: gig.escrow!.id }, data: { status: 'REFUNDED' } });
         await tx.gig.update({ where: { id: gig.id }, data: { status: 'CANCELLED' } });
         await tx.notification.createMany({
