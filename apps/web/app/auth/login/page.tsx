@@ -17,9 +17,13 @@ export default function LoginPage() {
     if (!email || !password) { toast.error('Please fill in all fields'); return; }
     setLoading(true);
     try {
-      await login(email, password);
+      const result = await login(email, password);
       toast.success('Welcome back!');
-      router.push('/');
+      // Redirect based on role — all inside the (dashboard) route group
+      const role = (result as any)?.role;
+      if (role === 'ADMIN') router.push('/admin');
+      else if (role === 'COMPANY') router.push('/company/gigs');
+      else router.push('/gigs');
     } catch (err: any) {
       toast.error(err.message || 'Login failed');
     } finally {
