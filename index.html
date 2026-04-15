@@ -1,0 +1,1715 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>InternMe — Rally 2026</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --ink: #1A1A14;
+      --yellow: #F5E642;
+      --gold: #C4A000;
+      --warm-white: #FAFAF7;
+      --cream: #E8E0C8;
+      --gray: #7A7A6A;
+      --off-white: #F5F3EE;
+      --card-dark: #242418;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #000;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    .deck {
+      width: 100vw;
+      height: 100vh;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .slide {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      padding: 64px 96px;
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+      pointer-events: none;
+    }
+
+    .slide.active {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: all;
+    }
+
+    .slide.exit {
+      opacity: 0;
+      transform: translateY(-40px);
+      transition: opacity 0.35s ease, transform 0.35s ease;
+    }
+
+    .slide-dark {
+      background: var(--ink);
+    }
+
+    .slide-light {
+      background: var(--warm-white);
+    }
+
+    /* Typography */
+    .label {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--gray);
+      letter-spacing: 0.3px;
+      margin-bottom: 32px;
+    }
+
+    .hero {
+      font-family: 'Fraunces', serif;
+      font-weight: 700;
+      line-height: 1.05;
+      letter-spacing: -1.5px;
+    }
+
+    .h1 {
+      font-family: 'Fraunces', serif;
+      font-weight: 700;
+      font-size: clamp(40px, 5vw, 56px);
+      line-height: 1.1;
+      letter-spacing: -0.5px;
+    }
+
+    .body-text {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 400;
+      font-size: 18px;
+      line-height: 1.6;
+      color: var(--cream);
+    }
+
+    /* Logo */
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-mark {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: Georgia, serif;
+      font-weight: 700;
+      font-size: 18px;
+      letter-spacing: -1px;
+      flex-shrink: 0;
+    }
+
+    .logo-mark-dark {
+      background: var(--ink);
+      color: var(--yellow);
+    }
+
+    .logo-mark-light {
+      background: var(--yellow);
+      color: var(--ink);
+    }
+
+    .logo-text {
+      font-family: Georgia, serif;
+      font-weight: 700;
+      font-size: 22px;
+      letter-spacing: -1px;
+    }
+
+    .logo-text .me-dark {
+      color: var(--gold);
+    }
+
+    .logo-text .me-light {
+      color: var(--yellow);
+    }
+
+    /* Nav */
+    .nav {
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 100;
+      background: rgba(26, 26, 20, 0.7);
+      -webkit-backdrop-filter: blur(8px);
+      backdrop-filter: blur(8px);
+      padding: 10px 16px;
+      border-radius: 100px;
+      border: 0.5px solid rgba(245, 230, 66, 0.15);
+    }
+
+    .nav-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .nav-dot.active {
+      background: var(--yellow);
+      width: 20px;
+      border-radius: 3px;
+    }
+
+    .nav-btn {
+      background: none;
+      border: none;
+      color: rgba(255, 255, 255, 0.5);
+      cursor: pointer;
+      font-size: 16px;
+      padding: 0 8px;
+      transition: color 0.2s;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    .nav-btn:hover {
+      color: var(--yellow);
+    }
+
+    .slide-counter {
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.3);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      min-width: 36px;
+      text-align: center;
+    }
+
+    /* ===== SLIDE 1 ===== */
+    #s1 {
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      gap: 0;
+    }
+
+    #s1 .hero-block {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    #s1 .line1 {
+      font-size: clamp(52px, 6.5vw, 80px);
+      color: var(--off-white);
+    }
+
+    #s1 .line2 {
+      font-size: clamp(52px, 6.5vw, 80px);
+      color: var(--yellow);
+    }
+
+    #s1 .line3 {
+      font-size: clamp(36px, 4.5vw, 56px);
+      color: var(--off-white);
+      opacity: 0.8;
+      margin-top: 8px;
+    }
+
+    #s1 .bottom-bar {
+      position: absolute;
+      bottom: 48px;
+      left: 96px;
+      right: 96px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    #s1 .tagline {
+      font-size: 16px;
+      color: var(--gray);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    /* ===== SLIDE 2 ===== */
+    #s2 {
+      justify-content: center;
+    }
+
+    #s2 .content {
+      display: flex;
+      gap: 80px;
+      align-items: center;
+      width: 100%;
+    }
+
+    #s2 .left {
+      flex: 1;
+    }
+
+    #s2 .line1 {
+      font-size: clamp(40px, 4.5vw, 52px);
+      color: var(--off-white);
+      margin-bottom: 4px;
+    }
+
+    #s2 .line2 {
+      font-size: clamp(40px, 4.5vw, 52px);
+      color: var(--yellow);
+      margin-bottom: 32px;
+    }
+
+    #s2 .body-text {
+      max-width: 580px;
+    }
+
+    #s2 .right {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      flex-shrink: 0;
+      width: 360px;
+    }
+
+    .stat-card {
+      background: var(--card-dark);
+      border-radius: 12px;
+      padding: 20px 24px;
+    }
+
+    .stat-card .stat-num {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 700;
+      font-size: 36px;
+      color: var(--yellow);
+      line-height: 1;
+    }
+
+    .stat-card .stat-label {
+      font-size: 14px;
+      color: var(--cream);
+      margin-top: 4px;
+    }
+
+    /* ===== SLIDE 3 ===== */
+    #s3 {
+      justify-content: center;
+    }
+
+    #s3 .headline {
+      font-size: clamp(48px, 6vw, 72px);
+      color: var(--ink);
+      margin-bottom: 12px;
+    }
+
+    #s3 .subhead {
+      font-size: 20px;
+      color: var(--gray);
+      margin-bottom: 56px;
+    }
+
+    #s3 .cols {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 32px;
+    }
+
+    .feature-col .icon-box {
+      width: 40px;
+      height: 40px;
+      background: var(--cream);
+      border-radius: 8px;
+      margin-bottom: 16px;
+    }
+
+    .feature-col .col-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 10px;
+    }
+
+    .feature-col .col-body {
+      font-size: 15px;
+      color: var(--gray);
+      line-height: 1.6;
+    }
+
+    /* ===== SLIDES 4.1, 4.2, 4.3 ===== */
+    .slide-product {
+      justify-content: center;
+    }
+
+    .slide-product .content {
+      display: flex;
+      gap: 80px;
+      align-items: center;
+      width: 100%;
+    }
+
+    .slide-product .left {
+      flex: 1;
+    }
+
+    .slide-product .headline {
+      font-size: clamp(40px, 4.5vw, 52px);
+      color: var(--off-white);
+      margin-bottom: 48px;
+    }
+
+    .slide-product .steps {
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    .step-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+    }
+
+    .step-num {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--yellow);
+      opacity: 0.5;
+      min-width: 24px;
+      padding-top: 2px;
+      letter-spacing: 0.5px;
+    }
+
+    .step-text {
+      font-size: 18px;
+      color: var(--gray);
+      line-height: 1.5;
+    }
+
+    .step-text.highlight {
+      color: var(--yellow);
+    }
+
+    .slide-product .right {
+      width: 400px;
+      height: 600px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .slide-product .right img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      border-radius: 12px;
+    }
+
+    /* ===== SLIDE 5 ===== */
+    #s5 {
+      justify-content: center;
+    }
+
+    #s5 .headline {
+      font-size: clamp(36px, 4vw, 48px);
+      color: var(--ink);
+      max-width: 860px;
+      margin-bottom: 56px;
+    }
+
+    #s5 .cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .model-card {
+      border-radius: 16px;
+      padding: 40px 48px;
+    }
+
+    .model-card-dark {
+      background: var(--ink);
+    }
+
+    .model-card-light {
+      background: var(--warm-white);
+      border: 1.5px solid var(--ink);
+    }
+
+    .model-card .card-who {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--gray);
+      margin-bottom: 8px;
+      letter-spacing: 0.3px;
+    }
+
+    .model-card .card-pct {
+      font-family: 'Fraunces', serif;
+      font-weight: 700;
+      font-size: clamp(72px, 9vw, 108px);
+      line-height: 1;
+      letter-spacing: -3px;
+    }
+
+    .pct-yellow {
+      color: var(--yellow);
+    }
+
+    .pct-ink {
+      color: var(--ink);
+    }
+
+    .model-card .card-desc {
+      font-size: 17px;
+      margin-top: 12px;
+      line-height: 1.5;
+    }
+
+    .desc-light {
+      color: var(--off-white);
+    }
+
+    .desc-ink {
+      color: var(--ink);
+    }
+
+    .model-card .card-note {
+      font-size: 13px;
+      color: var(--gray);
+      margin-top: 12px;
+    }
+
+    /* ===== SLIDE 5C (Value Propositions) ===== */
+    #s5c {
+      justify-content: center;
+    }
+
+    #s5c .headline {
+      font-size: clamp(36px, 4vw, 50px);
+      color: var(--ink);
+      margin-bottom: 56px;
+    }
+
+    #s5c .cols {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+    }
+
+    #s5c .list-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 24px;
+    }
+
+    #s5c .list-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    #s5c .list-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--ink);
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 7px;
+    }
+
+    #s5c .list-item span {
+      font-size: 16px;
+      color: var(--gray);
+      line-height: 1.5;
+    }
+
+    #s5c .list-item strong {
+      color: var(--ink);
+      font-weight: 600;
+    }
+
+    /* ===== SLIDE 5D (Competitive Advantage) ===== */
+    #s5d {
+      justify-content: center;
+    }
+
+    #s5d .headline {
+      font-size: clamp(36px, 4vw, 50px);
+      color: var(--off-white);
+      margin-bottom: 56px;
+    }
+
+    #s5d .cols {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+    }
+
+    #s5d .model-card-dark {
+      border: 0.5px solid rgba(255, 255, 255, 0.1);
+      padding: 40px;
+    }
+
+    #s5d .vs-title {
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--off-white);
+      margin-bottom: 24px;
+    }
+
+    #s5d .vs-flaw {
+      margin-bottom: 24px;
+      font-size: 15px;
+      color: var(--gray);
+      line-height: 1.6;
+    }
+
+    #s5d .vs-flaw span {
+      display: block;
+      color: #ff6b6b;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    #s5d .vs-edge {
+      font-size: 15px;
+      color: var(--gray);
+      line-height: 1.6;
+    }
+
+    #s5d .vs-edge span {
+      display: block;
+      color: var(--yellow);
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    /* ===== SLIDE 6 ===== */
+    #s6 {
+      justify-content: center;
+    }
+
+    #s6 .headline {
+      font-size: clamp(40px, 5vw, 58px);
+      color: var(--off-white);
+      margin-bottom: 56px;
+    }
+
+    #s6 .traction-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .traction-card {
+      background: var(--card-dark);
+      border-radius: 12px;
+      padding: 28px 24px;
+    }
+
+    .traction-card .t-num {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 700;
+      font-size: 28px;
+      color: var(--yellow);
+      line-height: 1.1;
+      margin-bottom: 8px;
+    }
+
+    .traction-card .t-label {
+      font-size: 13px;
+      color: var(--cream);
+      line-height: 1.4;
+    }
+
+    /* ===== SLIDE 7 ===== */
+    #s7 {
+      justify-content: center;
+    }
+
+    #s7 .headline {
+      font-size: clamp(36px, 4vw, 50px);
+      color: var(--ink);
+      margin-bottom: 64px;
+    }
+
+    #s7 .stats-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 48px;
+      margin-bottom: 48px;
+    }
+
+    .market-stat {
+      border-left: 2px solid var(--cream);
+      padding-left: 28px;
+    }
+
+    .market-stat .m-num {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 700;
+      font-size: clamp(40px, 5vw, 56px);
+      color: var(--gold);
+      line-height: 1;
+      margin-bottom: 10px;
+    }
+
+    .market-stat .m-label {
+      font-size: 15px;
+      color: var(--gray);
+    }
+
+    #s7 .note {
+      font-size: 15px;
+      color: var(--gray);
+      font-style: italic;
+      border-top: 0.5px solid var(--cream);
+      padding-top: 24px;
+    }
+
+    /* ===== SLIDE 8 ===== */
+    #s8 {
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    #s8 .headline {
+      font-size: clamp(36px, 4vw, 48px);
+      color: var(--off-white);
+      margin-bottom: 48px;
+      max-width: 700px;
+    }
+
+    #s8 .team-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-bottom: 40px;
+      width: 100%;
+    }
+
+    #s8 .founder-card {
+      background: var(--card-dark);
+      border-radius: 16px;
+      padding: 32px 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 16px;
+      border: 0.5px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .avatar {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: var(--yellow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 700;
+      font-size: 22px;
+      color: var(--ink);
+      flex-shrink: 0;
+    }
+
+    .founder-info {
+      text-align: center;
+    }
+
+    .founder-name {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--off-white);
+      margin-bottom: 4px;
+    }
+
+    .founder-title {
+      font-size: 14px;
+      color: var(--gray);
+    }
+
+    .founder-contact {
+      margin-top: 12px;
+      font-size: 13px;
+      color: var(--gray);
+    }
+
+    .founder-contact a {
+      color: var(--yellow);
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+
+    .founder-contact a:hover {
+      opacity: 0.8;
+      text-decoration: underline;
+    }
+
+    #s8 .team-note {
+      font-size: 17px;
+      color: var(--gray);
+      max-width: 680px;
+      line-height: 1.6;
+    }
+
+    /* ===== SLIDE 9 ===== */
+    #s9 {
+      justify-content: center;
+    }
+
+    #s9 .headline {
+      font-size: clamp(40px, 5vw, 60px);
+      color: var(--ink);
+      margin-bottom: 56px;
+    }
+
+    #s9 .cols {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      margin-bottom: 56px;
+    }
+
+    .ask-col .ask-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 24px;
+    }
+
+    .ask-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .ask-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--gold);
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 7px;
+    }
+
+    .ask-item span {
+      font-size: 16px;
+      color: var(--gray);
+      line-height: 1.5;
+    }
+
+    #s9 .contact-bar {
+      display: inline-flex;
+      align-items: center;
+      background: var(--ink);
+      border-radius: 8px;
+      padding: 16px 32px;
+    }
+
+    #s9 .contact-bar span {
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--yellow);
+      letter-spacing: 0.2px;
+    }
+
+    /* ===== SLIDE 10 ===== */
+    #s10 {
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    #s10 .close-block {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 56px;
+    }
+
+    #s10 .line1 {
+      font-size: clamp(44px, 5.5vw, 64px);
+      color: var(--off-white);
+    }
+
+    #s10 .line2 {
+      font-size: clamp(44px, 5.5vw, 64px);
+      color: var(--yellow);
+    }
+
+    #s10 .brand-name {
+      font-size: clamp(28px, 3.5vw, 40px);
+      color: var(--off-white);
+      opacity: 0.5;
+      margin-top: 32px;
+    }
+
+    /* Entrance animations for active slide children */
+    .slide.active .anim {
+      animation: fadeUp 0.6s ease forwards;
+    }
+
+    .slide.active .anim:nth-child(1) {
+      animation-delay: 0.05s;
+    }
+
+    .slide.active .anim:nth-child(2) {
+      animation-delay: 0.15s;
+    }
+
+    .slide.active .anim:nth-child(3) {
+      animation-delay: 0.25s;
+    }
+
+    .slide.active .anim:nth-child(4) {
+      animation-delay: 0.35s;
+    }
+
+    .slide.active .anim:nth-child(5) {
+      animation-delay: 0.45s;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .anim {
+      opacity: 0;
+    }
+
+    /* Keyboard hint */
+    .hint {
+      position: fixed;
+      top: 24px;
+      right: 32px;
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.2);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      z-index: 100;
+      letter-spacing: 0.3px;
+    }
+
+    @media (max-width: 1200px) {
+      .slide {
+        padding: 56px 56px 92px;
+      }
+
+      #s2 .content,
+      .slide-product .content,
+      #s9 .cols {
+        gap: 48px;
+      }
+
+      #s2 .right {
+        width: 320px;
+      }
+
+      .slide-product .right {
+        width: 340px;
+        height: 480px;
+      }
+    }
+
+    @media (max-width: 900px) {
+      html,
+      body {
+        overflow: hidden;
+      }
+
+      .slide {
+        padding: 24px 20px 92px;
+        transform: translateY(20px);
+        overflow-y: auto;
+      }
+
+      .slide.exit {
+        transform: translateY(-20px);
+      }
+
+      .label {
+        font-size: 12px;
+        margin-bottom: 18px;
+      }
+
+      .body-text {
+        font-size: 16px;
+      }
+
+      .h1 {
+        font-size: clamp(30px, 8vw, 44px);
+        letter-spacing: -0.3px;
+      }
+
+      #s1 {
+        justify-content: flex-start;
+        gap: 24px;
+        padding-top: 72px;
+      }
+
+      #s1 .hero-block {
+        gap: 6px;
+      }
+
+      #s1 .line1,
+      #s1 .line2 {
+        font-size: clamp(34px, 10vw, 52px);
+      }
+
+      #s1 .line3 {
+        font-size: clamp(24px, 7vw, 36px);
+      }
+
+      #s1 .bottom-bar {
+        position: static;
+        margin-top: auto;
+        width: 100%;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+
+      #s2 .content,
+      .slide-product .content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 24px;
+      }
+
+      #s2 .right,
+      .slide-product .right {
+        width: 100%;
+      }
+
+      .slide-product .right {
+        height: auto;
+        max-height: none;
+      }
+
+      .slide-product .right img {
+        width: 100%;
+        max-height: 40vh;
+        object-fit: contain;
+      }
+
+      .slide-product .headline {
+        margin-bottom: 24px;
+      }
+
+      .slide-product .steps {
+        gap: 18px;
+      }
+
+      .step-text {
+        font-size: 16px;
+      }
+
+      #s3 .headline,
+      #s6 .headline,
+      #s9 .headline {
+        margin-bottom: 24px;
+      }
+
+      #s5d {
+        justify-content: flex-start;
+      }
+
+      #s5d .headline {
+        margin-bottom: 24px;
+      }
+
+      #s3 .subhead,
+      #s7 .headline,
+      #s8 .headline {
+        margin-bottom: 28px;
+      }
+
+      #s3 .cols,
+      #s5 .cards,
+      #s5b .cards,
+      #s5c .cols,
+      #s5d .cols,
+      #s9 .cols,
+      #s7 .stats-row {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+
+      .model-card {
+        padding: 24px;
+      }
+
+      #s5d .model-card-dark {
+        padding: 24px;
+      }
+
+      #s5 .headline,
+      #s5c .headline,
+      #s5d .headline,
+      #s7 .headline,
+      #s8 .headline,
+      #s9 .headline {
+        max-width: 100%;
+      }
+
+      #s6 .traction-grid {
+        grid-template-columns: 1fr;
+      }
+
+      #s7 .stats-row {
+        margin-bottom: 24px;
+      }
+
+      .market-stat {
+        border-left: none;
+        border-top: 2px solid var(--cream);
+        padding-left: 0;
+        padding-top: 16px;
+      }
+
+      #s8 .team-grid {
+        grid-template-columns: 1fr;
+        margin-bottom: 24px;
+      }
+
+      #s8 .founder-card {
+        align-items: flex-start;
+        text-align: left;
+      }
+
+      .founder-info {
+        text-align: left;
+      }
+
+      #s9 .contact-bar {
+        width: 100%;
+        justify-content: center;
+        text-align: center;
+        padding: 14px 18px;
+      }
+
+      #s9 .contact-bar span {
+        font-size: 14px;
+      }
+
+      #s10 {
+        justify-content: flex-start;
+        padding-top: 84px;
+      }
+
+      #s10 .close-block {
+        margin-bottom: 24px;
+      }
+
+      #s10 .brand-name {
+        margin-top: 20px;
+      }
+
+      .nav {
+        bottom: 10px;
+        left: 12px;
+        right: 12px;
+        transform: none;
+        justify-content: center;
+        gap: 6px;
+        padding: 8px 10px;
+        border-radius: 18px;
+      }
+
+      .hint {
+        display: none;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .slide {
+        padding: 18px 14px 86px;
+      }
+
+      .logo-mark {
+        width: 34px;
+        height: 34px;
+        font-size: 14px;
+      }
+
+      .logo-text {
+        font-size: 18px;
+      }
+
+      .nav-dot {
+        width: 5px;
+        height: 5px;
+      }
+
+      .nav-dot.active {
+        width: 14px;
+      }
+
+      .slide-counter {
+        font-size: 10px;
+        min-width: 28px;
+      }
+
+      .nav-btn {
+        font-size: 14px;
+        padding: 0 4px;
+      }
+
+      .traction-card,
+      #s8 .founder-card {
+        padding: 20px 16px;
+      }
+
+      #s8 .team-note,
+      #s7 .note,
+      .ask-item span,
+      #s5c .list-item span {
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="deck" id="deck">
+
+    <!-- SLIDE 1 — Title -->
+    <div class="slide slide-dark active" id="s1">
+      <div class="hero-block">
+        <div class="hero line1 anim">600,000 graduates.</div>
+        <div class="hero line2 anim">40% unemployed.</div>
+        <div class="hero line3 anim">We fixed the broken middle.</div>
+      </div>
+      <div class="bottom-bar">
+        <div class="logo anim">
+          <div class="logo-mark logo-mark-light">Me</div>
+          <div class="logo-text" style="color: var(--off-white);">Intern<span class="me-light">Me</span></div>
+        </div>
+        <div class="tagline anim">InternMe · Rally 2026</div>
+      </div>
+    </div>
+
+    <!-- SLIDE 2 — Problem -->
+    <div class="slide slide-dark" id="s2">
+      <div class="label anim">The problem</div>
+      <div class="content">
+        <div class="left">
+          <div class="h1 line1 anim">Students can't get jobs.</div>
+          <div class="h1 line2 anim" style="color:var(--yellow)">Companies won't hire them.</div>
+          <p class="body-text anim" style="margin-top:32px; max-width:580px;">Traditional internships require 3-month
+            commitments. CVs get filtered by university name, not ability. SMEs screen 1,000+ applicants to hire one
+            junior.</p>
+        </div>
+        <div class="right anim">
+          <div class="stat-card">
+            <div class="stat-num">600,000+</div>
+            <div class="stat-label">graduates per year in Egypt</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num">40%+</div>
+            <div class="stat-label">youth unemployment rate</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num">1,000+ CVs</div>
+            <div class="stat-label">screened to hire one junior</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 3 — Solution -->
+    <div class="slide slide-light" id="s3">
+      <div class="label anim" style="color:var(--gray)">The solution</div>
+      <div class="h1 headline anim">Micro-internships.</div>
+      <p class="subhead anim">5–20 hour paid gigs. Skills only. No prestige filter.</p>
+      <div class="cols anim">
+        <div class="feature-col">
+          <!-- <div class="icon-box"></div> -->
+          <div class="col-title">Project-based</div>
+          <div class="col-body">Real deliverables — not coffee runs. Students build a portfolio across 10+ companies.
+          </div>
+        </div>
+        <div class="feature-col">
+          <!-- <div class="icon-box"></div> -->
+          <div class="col-title">Blind Match AI</div>
+          <div class="col-body">Our algorithm ranks on verified skills. University name is hidden from companies.</div>
+        </div>
+        <div class="feature-col">
+          <!-- <div class="icon-box"></div> -->
+          <div class="col-title">Try before you hire</div>
+          <div class="col-body">Companies test potential full-time hires through actual work. Zero long-term risk.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDES 4.x — Product -->
+    <div class="slide slide-dark slide-product" id="s4-1">
+      <div class="label anim">The product</div>
+      <div class="content">
+        <div class="left">
+          <div class="h1 headline anim">How it works</div>
+          <div class="steps anim">
+            <div class="step-row">
+              <div class="step-num">01</div>
+              <div class="step-text highlight">Student creates skill-verified profile</div>
+            </div>
+            <div class="step-row" style="opacity: 0.3;">
+              <div class="step-num">02</div>
+              <div class="step-text">AI blind-matches to open gigs</div>
+            </div>
+            <div class="step-row" style="opacity: 0.3;">
+              <div class="step-num">03</div>
+              <div class="step-text">Generate ATS Friendly CV</div>
+            </div>
+          </div>
+        </div>
+        <div class="right anim">
+          <img src="image-2.png" alt="Student Profile interface">
+        </div>
+      </div>
+    </div>
+
+    <div class="slide slide-dark slide-product" id="s4-2">
+      <div class="label anim">The product</div>
+      <div class="content">
+        <div class="left">
+          <div class="h1 headline anim">How it works</div>
+          <div class="steps anim">
+            <div class="step-row" style="opacity: 0.3;">
+              <div class="step-num">01</div>
+              <div class="step-text">Student creates skill-verified profile</div>
+            </div>
+            <div class="step-row">
+              <div class="step-num">02</div>
+              <div class="step-text highlight">AI blind-matches to open gigs</div>
+            </div>
+            <div class="step-row" style="opacity: 0.3;">
+              <div class="step-num">03</div>
+              <div class="step-text">Generate ATS Friendly CV</div>
+            </div>
+          </div>
+        </div>
+        <div class="right anim">
+          <img src="image-3.png" alt="Blind Match interface">
+        </div>
+      </div>
+    </div>
+
+    <div class="slide slide-dark slide-product" id="s4-3">
+      <div class="label anim">The product</div>
+      <div class="content">
+        <div class="left">
+          <div class="h1 headline anim">How it works</div>
+          <div class="steps anim">
+            <div class="step-row" style="opacity: 0.3;">
+              <div class="step-num">01</div>
+              <div class="step-text">Student creates skill-verified profile</div>
+            </div>
+            <div class="step-row" style="opacity: 0.3;">
+              <div class="step-num">02</div>
+              <div class="step-text">AI blind-matches to open gigs</div>
+            </div>
+            <div class="step-row">
+              <div class="step-num">03</div>
+              <div class="step-text highlight">Generate ATS Friendly CV</div>
+            </div>
+          </div>
+        </div>
+        <div class="right anim">
+          <img src="image-1.png" alt="Escrow interface">
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 5 — Business Model -->
+    <div class="slide slide-light" id="s5">
+      <div class="label anim" style="color:var(--gray)">Business model</div>
+      <div class="h1 headline anim" style="margin-bottom: 48px;">Revenue Streams</div>
+      <div class="cards anim">
+        <div class="model-card model-card-dark">
+          <div class="card-who" style="font-size: 16px; margin-bottom: 8px;">Company side (B2B)</div>
+          <div class="card-pct pct-yellow"
+            style="font-size: 72px; line-height: 1; margin-bottom: 24px; letter-spacing: -2px;">15%</div>
+          <div class="card-desc desc-light"
+            style="font-size: 16px; line-height: 1.5; display: flex; flex-direction: column; gap: 12px;">
+            <div><strong>• Commission:</strong> service fee per completed internship.</div>
+            <div style="opacity: 0.8;"><strong>• Subscription (Future):</strong> SaaS model for high-volume hiring.
+            </div>
+          </div>
+        </div>
+        <div class="model-card model-card-light">
+          <div class="card-who" style="font-size: 16px; margin-bottom: 8px;">Student Side (B2C)</div>
+          <div class="card-pct pct-ink"
+            style="font-size: 72px; line-height: 1; margin-bottom: 24px; letter-spacing: -2px;">10%</div>
+          <div class="card-desc desc-ink"
+            style="font-size: 16px; line-height: 1.5; display: flex; flex-direction: column; gap: 12px;">
+            <div><strong>• Success Fee:</strong> of every internship earnings.</div>
+            <div style="opacity: 0.8;"><strong>• Zero Upfront:</strong> Free to join, apply, and interview.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 5B — Customer Segments -->
+    <div class="slide slide-light" id="s5b">
+      <div class="label anim" style="color:var(--gray)">Market</div>
+      <div class="h1 headline anim" style="margin-bottom: 48px;">Customer Segments</div>
+      <div class="cards anim">
+        <div class="model-card model-card-dark" style="padding: 40px;">
+          <div class="card-who" style="font-size: 20px; margin-bottom: 24px; color: var(--off-white);">Students (Supply
+            side)</div>
+          <div class="card-desc desc-light"
+            style="font-size: 16px; line-height: 1.6; display: flex; flex-direction: column; gap: 16px; margin-top: 0;">
+            <div style="display: flex; gap: 12px;"><span style="color:var(--yellow)">•</span>
+              <span><strong>Undergraduates:</strong> Primarily CS, Business, and Design majors (e.g., AAST students)
+                building portfolios.</span>
+            </div>
+            <div style="display: flex; gap: 12px;"> </div>
+          </div>
+        </div>
+        <div class="model-card model-card-light" style="padding: 40px;">
+          <div class="card-who" style="font-size: 20px; margin-bottom: 24px; color: var(--ink);">Companies (Demand side)
+          </div>
+          <div class="card-desc desc-ink"
+            style="font-size: 16px; line-height: 1.6; display: flex; flex-direction: column; gap: 16px; margin-top: 0;">
+            <div style="display: flex; gap: 12px;"><span style="color:var(--ink)">•</span> <span><strong>Early-Stage
+                  Startups:</strong> Pre-seed/Seed companies needing specific technical tasks without full-time hiring
+                budgets.</span></div>
+            <div style="display: flex; gap: 12px;"><span style="color:var(--ink)">•</span> <span><strong>SMEs:</strong>
+                Traditional businesses needing digitization (websites, social media) but lacking in-house tech
+                teams.</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 5C — Value Propositions -->
+    <div class="slide slide-light" id="s5c">
+      <div class="label anim" style="color:var(--gray)">Value</div>
+      <div class="h1 headline anim">Value Propositions</div>
+      <div class="cols anim">
+        <div class="list-col">
+          <div class="list-title">For Students:</div>
+          <div class="list-item">
+            <div class="list-dot"></div><span><strong>Real Experience:</strong> Access to short-term, paid
+              micro-internships to build a portfolio.</span>
+          </div>
+          <div class="list-item">
+            <div class="list-dot"></div><span><strong>Flexibility:</strong> Remote, task-based work that fits around
+              university schedules.</span>
+          </div>
+          <div class="list-item">
+            <div class="list-dot"></div><span><strong>Career Path:</strong> A "try-before-you-commit" way to explore
+              different industries.</span>
+          </div>
+        </div>
+        <div class="list-col">
+          <div class="list-title">For Companies (Startups/SMEs):</div>
+          <div class="list-item">
+            <div class="list-dot"></div><span><strong>Cost-Effective Talent:</strong> Access skilled students for
+              specific tasks without long-term hiring risks.</span>
+          </div>
+          <div class="list-item">
+            <div class="list-dot"></div><span><strong>Vetting Pipeline:</strong> Test potential full-time hires through
+              actual work performance.</span>
+          </div>
+          <div class="list-item">
+            <div class="list-dot"></div><span><strong>Speed:</strong> Reduce time-to-hire for project-based needs (dev,
+              design, marketing).</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 5D — Competitive Advantage -->
+    <div class="slide slide-dark" id="s5d">
+      <div class="label anim">Why Us</div>
+      <div class="h1 headline anim"><span style="color: #F5E642;">InternMe</span> vs. LinkedIn</div>
+      <div class="cols anim">
+        <div class="model-card model-card-dark">
+          <div class="vs-title">1. "Blind Matching" vs. Prestige Bias</div>
+          <div class="vs-flaw">
+            <span>LinkedIn's flaw:</span>
+            Search algorithms heavily favor "prestige signals"—elite university names, massive connection counts, and
+            past job titles. It is a popularity contest.
+          </div>
+          <div class="vs-edge">
+            <span>InternMe's edge:</span>
+            Our AI "Blind Match" evaluates pure capability. By stripping away university names and focusing on verified
+            skills, we surface the best talent for the task, democratizing access.
+          </div>
+        </div>
+
+        <div class="model-card model-card-dark">
+          <div class="vs-title">2. End-to-End Transaction</div>
+          <div class="vs-flaw">
+            <span>LinkedIn's flaw:</span>
+            LinkedIn stops at the handshake. A company messages a student, and then what? They have to negotiate
+            offline, figure out how to pay them, and risk the student ghosting them.
+          </div>
+          <div class="vs-edge">
+            <span>InternMe's edge:</span>
+            We control the transaction layer. With our Paymob-powered Escrow system, the company deposits the money, the
+            student does the work, and the payout is guaranteed. We aren't a networking site; we are a secure workflow
+            infrastructure.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 6 — Why We'll Win -->
+    <div class="slide slide-dark" id="s6">
+      <div class="label anim">The Head Start</div>
+      <div class="h1 headline anim">The launchpad is already here.</div>
+      <div class="traction-grid anim">
+        <div class="traction-card">
+          <div class="t-num">500+ CS students</div>
+          <div class="t-label">AASTMT cohort ready to pilot the MVP — our first supply side</div>
+        </div>
+        <div class="traction-card">
+          <div class="t-num">Rally network</div>
+          <div class="t-label">Direct access to Egypt's startup demand side — companies who need talent now</div>
+        </div>
+
+        <div class="traction-card">
+          <div class="t-num">37,500 EGP</div>
+          <div class="t-label">Projected Year 1 revenue from just 100 placements at 1,500 EGP avg</div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- SLIDE 7 — Market -->
+    <div class="slide slide-light" id="s7">
+      <div class="label anim" style="color:var(--gray)">Market size</div>
+      <div class="h1 headline anim">The market is massive<br>and untouched.</div>
+      <div class="stats-row anim">
+        <div class="market-stat">
+          <div class="m-num">2.5M+</div>
+          <div class="m-label">university students in Egypt</div>
+        </div>
+        <div class="market-stat">
+          <div class="m-num">50,000+</div>
+          <div class="m-label">active SMEs and startups</div>
+        </div>
+        <div class="market-stat">
+          <div class="m-num">$0</div>
+          <div class="m-label">dedicated micro-internship platforms</div>
+        </div>
+      </div>
+      <div class="note anim">First-mover advantage in a market with no direct competitor.</div>
+    </div>
+
+    <!-- SLIDE 8 — Team -->
+    <div class="slide slide-dark" id="s8">
+      <div class="label anim" style="color:var(--gray); text-align:center;">The team</div>
+      <div class="h1 headline anim">Built by students who<br>lived the problem.</div>
+      <div class="team-grid">
+        <div class="founder-card anim">
+          <div class="avatar">OE</div>
+          <div class="founder-info">
+            <div class="founder-name">Omar Emad</div>
+            <div class="founder-title">Software Engineer, AASTMT</div>
+            <div class="founder-contact">
+              <a href="mailto:omaremad2642005@gmail.com" target="_blank">Email</a> · 
+              <a rel="https://www.linkedin.com/in/omarelhabashy0" target="_blank">LinkedIn</a>
+            </div>
+          </div>
+        </div>
+        <div class="founder-card anim">
+          <div class="avatar">AE</div>
+          <div class="founder-info">
+            <div class="founder-name">Anas Essam</div>
+            <div class="founder-title">Software Engineer, Helwan University</div>
+            <div class="founder-contact">
+              <a href="mailto:anozeducate@gmail.com" target="_blank">Email</a> · 
+              <a rel="https://www.linkedin.com/in/anas-essam-8b9764243/" target="_blank">LinkedIn</a>
+            </div>
+          </div>
+        </div>
+        <div class="founder-card anim">
+          <div class="avatar">NA</div>
+          <div class="founder-info">
+            <div class="founder-name">Nariman Adel</div>
+            <div class="founder-title">Software Engineer, AASTMT</div>
+            <div class="founder-contact">
+              <a href="mailto:nariman.adel2005@gmail.com" target="_blank">Email</a> · 
+              <a rel="https://www.linkedin.com/in/nariman-el-azhary-72a104292" target="_blank">LinkedIn</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="team-note anim">We are 3 people with the right distribution, the right market, and zero competition.</p>
+    </div>
+
+    <!-- SLIDE 9 — The Ask -->
+    <div class="slide slide-light" id="s9">
+      <div class="label anim" style="color:var(--gray)">The ask</div>
+      <div class="h1 headline anim">What we need from Rally.</div>
+      <div class="cols anim">
+        <div class="ask-col">
+          <div class="ask-title">We're asking for:</div>
+          <div class="ask-item">
+            <div class="ask-dot"></div><span>Incubation &amp; mentorship</span>
+          </div>
+          <!-- <div class="ask-item">
+            <div class="ask-dot"></div><span>Technical resources for MVP</span>
+          </div> -->
+        </div>
+        <div class="ask-col">
+          <div class="ask-title">In return, Rally gets:</div>
+          <div class="ask-item">
+            <div class="ask-dot"></div><span>First access to Egypt's top student talent pool</span>
+          </div>
+          <div class="ask-item">
+            <div class="ask-dot"></div><span>A pipeline of vetted junior hires for portfolio companies</span>
+          </div>
+        </div>
+      </div>
+      <div class="contact-bar anim">
+        <span>internme.co · omar@internme.co</span>
+      </div>
+    </div>
+
+    <!-- SLIDE 10 — Vision -->
+    <div class="slide slide-dark" id="s10">
+      <div class="close-block">
+        <div class="hero line1 anim">Every Egyptian student deserves</div>
+        <div class="hero line2 anim">a fair shot.</div>
+        <div class="hero brand-name anim">InternMe.</div>
+      </div>
+      <div style="position:absolute; bottom:140px; left:50%; transform:translateX(-50%);">
+        <div class="logo anim">
+          <div class="logo-mark logo-mark-light">Me</div>
+          <div class="logo-text" style="color:var(--off-white);">Intern<span class="me-light">Me</span></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /deck -->
+
+  <!-- Nav -->
+  <nav class="nav" id="nav"></nav>
+  <div class="hint">← → arrow keys or click</div>
+
+  <script>
+    const slides = document.querySelectorAll('.slide');
+    const navEl = document.getElementById('nav');
+    let current = 0;
+    const total = slides.length;
+
+    function buildNav() {
+      navEl.innerHTML = '';
+      const prev = document.createElement('button');
+      prev.className = 'nav-btn'; prev.textContent = '←';
+      prev.onclick = () => go(current - 1);
+      navEl.appendChild(prev);
+
+      for (let i = 0; i < total; i++) {
+        const d = document.createElement('div');
+        d.className = 'nav-dot' + (i === 0 ? ' active' : '');
+        d.onclick = () => go(i);
+        navEl.appendChild(d);
+      }
+
+      const counter = document.createElement('div');
+      counter.className = 'slide-counter';
+      counter.id = 'counter';
+      counter.textContent = '1 / ' + total;
+      navEl.appendChild(counter);
+
+      const next = document.createElement('button');
+      next.className = 'nav-btn'; next.textContent = '→';
+      next.onclick = () => go(current + 1);
+      navEl.appendChild(next);
+    }
+
+    function go(n) {
+      if (n < 0 || n >= total) return;
+      slides[current].classList.add('exit');
+      slides[current].classList.remove('active');
+      setTimeout(() => slides[current].classList.remove('exit'), 400);
+      current = n;
+      slides[current].classList.add('active');
+      document.querySelectorAll('.nav-dot').forEach((d, i) => {
+        d.classList.toggle('active', i === current);
+      });
+      document.getElementById('counter').textContent = (current + 1) + ' / ' + total;
+    }
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') go(current + 1);
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') go(current - 1);
+    });
+
+    let touchStartX = 0;
+    let touchStartY = 0;
+
+    document.getElementById('deck').addEventListener('touchstart', e => {
+      const t = e.changedTouches[0];
+      touchStartX = t.clientX;
+      touchStartY = t.clientY;
+    }, { passive: true });
+
+    document.getElementById('deck').addEventListener('touchend', e => {
+      const t = e.changedTouches[0];
+      const dx = t.clientX - touchStartX;
+      const dy = t.clientY - touchStartY;
+
+      if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy)) {
+        if (dx < 0) go(current + 1);
+        if (dx > 0) go(current - 1);
+      }
+    }, { passive: true });
+
+    buildNav();
+  </script>
+</body>
+
+</html>
